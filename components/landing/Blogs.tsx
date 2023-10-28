@@ -4,12 +4,13 @@ import Image from "next/image";
 import { CalendarClock, MapPin } from "lucide-react";
 import Link from "next/link";
 interface BlogData {
-    category: string;
-    title: string;
-    desc: string;
-}[]
+  category: string;
+  title: string;
+  desc: string;
+}
+[];
 
-// const BLOGS : 
+// const BLOGS :
 
 function Blogs() {
   return (
@@ -30,7 +31,9 @@ function Blogs() {
                   <h2 className="bg-app-slate-blue rounded font-medium px-2 py-1 w-fit">
                     Tags
                   </h2>
-                  <h1 className="font-semibold text-2xl capitalize">title of the blog goes here</h1>
+                  <h1 className="font-semibold text-2xl capitalize">
+                    title of the blog goes here
+                  </h1>
                   <div className="text-base text-slate-300/80">
                     <p>
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -63,13 +66,15 @@ function Blogs() {
                   className="h-12 text-base mt-auto"
                   asChild
                 >
-                  <Link href={`/posting/${post.id}`}>Read More</Link>
+                  <Link href={`/blogs/${idx}`}>Read More</Link>
                 </Button>
               </div>
             ))}
         </div>
         <div className="flex justify-center mt-4">
-            <Button className="h-12">View More</Button>
+          <Button className="h-12" asChild>
+            <Link href={"/blogs"}>View More</Link>
+          </Button>
         </div>
       </div>
     </section>
