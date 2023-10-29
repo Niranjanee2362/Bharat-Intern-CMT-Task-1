@@ -8,35 +8,42 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Menu } from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { signIn } from "next-auth/react";
-
+import { signIn, signOut, useSession } from "next-auth/react";
 
 interface Navdata {
   title: string;
   link: string;
-}[]
-const NAVDATA : Navdata[] = [
-    {
-        title: "Link 1",
-        link: '/'
-    },
-    {
-        title:"Link 2",
-        link: '/'
-    },
-    {
-        title:"Link 3",
-        link: '/'
-    },
-    {
-        title:"Link 4",
-        link: '/'
-    },
-]
+}
+[];
+const NAVDATA: Navdata[] = [
+  {
+    title: "Link 1",
+    link: "/",
+  },
+  {
+    title: "Link 2",
+    link: "/",
+  },
+  {
+    title: "Link 3",
+    link: "/",
+  },
+  {
+    title: "Link 4",
+    link: "/",
+  },
+];
 function Header() {
+  const { data: session } = useSession();
   return (
     <nav className="px-4 md:p-0 sticky top-0 z-50 flex items-center h-[5rem] bg-app-grey-dark justify-between md:px-16  lg:mx-auto">
       <Link href={"/"}>
@@ -56,13 +63,33 @@ function Header() {
             </li>
           ))}
           <li>
-            <Button
-              className="h-12"
-              variant={"default"}
-              onClick={() => signIn("google")}
-            >
-              Post a Blog
-            </Button>
+            {!session ? (
+              <Button
+                variant={"default"}
+                onClick={() => signIn("google")}
+                className="h-12"
+              >
+                Post a Blog
+              </Button>
+            ) : (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Image
+                      alt="Man"
+                      src={session?.user?.image!}
+                      width={100}
+                      height={100}
+                      className="rounded-full object-cover w-12 h-12 hover:cursor-pointer"
+                      onClick={() => signOut()}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to Sign Out</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </li>
         </ul>
       </div>
@@ -74,7 +101,7 @@ function Header() {
           <SheetContent className="bg-app-grey-dark">
             <SheetHeader>
               <SheetTitle className="text-2xl font-semibold text-white">
-                DeWorks
+                BharatBlog
               </SheetTitle>
               <SheetDescription>
                 <nav className="contents font-semibold ">
@@ -91,13 +118,23 @@ function Header() {
                       </li>
                     ))}
                     <li>
-                      <Button
-                        variant={"default"}
-                        onClick={() => signIn("google")}
-                        className="h-12"
-                      >
-                        Post a Blog
-                      </Button>
+                      {!session ? (
+                        <Button
+                          variant={"default"}
+                          onClick={() => signIn("google")}
+                          className="h-12"
+                        >
+                          Post a Blog
+                        </Button>
+                      ) : (
+                        <Button
+                          variant={"default"}
+                          onClick={() => signOut()}
+                          className="h-12"
+                        >
+                          Sign Out
+                        </Button>
+                      )}
                     </li>
                   </ul>
                 </nav>

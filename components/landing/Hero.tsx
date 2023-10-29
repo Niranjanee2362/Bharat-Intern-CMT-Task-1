@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 const Hero = () => {
   return (
@@ -15,7 +16,9 @@ const Hero = () => {
           </p>
         </div>
         <div className="flex w-full flex-col gap-4 md:flex-row">
-          <Button className="w-full ">Explore</Button>
+          <Button className="w-full" asChild>
+            <Link href={'/blogs'}>Explore</Link>
+          </Button>
         </div>
       </div>
     </main>
