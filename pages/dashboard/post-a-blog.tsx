@@ -2,6 +2,7 @@ import { db, storage } from "@/backend/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -124,6 +125,7 @@ function PostBlog({ user }: any) {
               console.log(newBlog);
               setLoading(false);
               alert("Blog Posted");
+              
             }
           });
         }
@@ -131,7 +133,7 @@ function PostBlog({ user }: any) {
       console.log(files);
       console.log(values);
     } else {
-      // write submit logic here
+      alert('upload cover img');
     }
   };
 
@@ -256,10 +258,13 @@ function PostBlog({ user }: any) {
               id="content"
             />
           </div>
-
           <Button type="submit" className="h-12">
-            Post this Blog
+            {loading ? "Uploading..." : "Post this Blog"}
           </Button>
+          {progress > 0 && <Progress value={progress} className="w-full" />}
+          {/* <Button type="submit" className="h-12">
+            Post this Blog
+          </Button> */}
         </form>
       </section>
       {/* <Footer /> */}
