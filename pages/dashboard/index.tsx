@@ -6,7 +6,8 @@ import React from "react";
 import { db } from '@/backend/firebase';
 import PostedBlogs from "@/components/dashboard/PostedBlogs";
  
-function Dashboard({user}:any) {
+function Dashboard() {
+  // console.log(user)
   return (
     <main className="min-h-screen bg-[url('/assets/line-bg.png')] w-full font-outfit bg-app-grey-dark text-stone-200">
       <div className="p-4 md:px-16 lg:max-w-7xl lg:mx-auto">
@@ -33,58 +34,30 @@ function Dashboard({user}:any) {
   );
 }
 
-export async function getServerSideProps(context: any) {
-  const session = await getSession(context);
+// export async function getServerSideProps(context: any) {
+//   const session = await getSession(context);
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-  const email = session?.user?.email;
-  const docRef = doc(db, "users", email!);
-  const docSnap = await getDoc(docRef);
-
-//   if (!docSnap.data()?.registered) {
+//   if (!session) {
 //     return {
 //       redirect: {
-//         destination: "/register",
+//         destination: "/",
 //         permanent: false,
 //       },
 //     };
 //   }
-  // if (docSnap.data()?.paperUpload) {
-  //   const paperId = docSnap.data()?.paperId;
-  //   const paperRef = doc(db, "papers", paperId);
-  //   const paperSnap = await getDoc(paperRef);
-  //   const paper: any = paperSnap.data();
-  //   return {
-  //   props: {
-  //     paper: {
-  //       ...paper,
-  //       createdAt: (paper.createdAt as Timestamp).toDate().toLocaleString(),
-  //     },
-  //   },
-  // };
-  // }
-  // else{
-  //   return {
-  //     props: {
-  //       paper: null
-  //     }
-  //   }
-  // }
+//   const email = session?.user?.email;
+//   const docRef = doc(db, "users", email!);
+//   const docSnap = await getDoc(docRef);
 
-  const user: any = session ? { user: docSnap.data() } : null;
-  return {
-    props: {
-      ...user,
-    },
-  };
-}
+
+
+//   const user: any = session ? { user: docSnap.data() } : null;
+//   return {
+//     props: {
+//       ...user,
+//     },
+//   };
+// }
 
 
 export default Dashboard;
