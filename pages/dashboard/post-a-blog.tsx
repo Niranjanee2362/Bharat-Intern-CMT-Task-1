@@ -1,3 +1,4 @@
+import { db, storage } from "@/backend/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,13 +10,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  collection,
+  doc,
+  getCountFromServer,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { getSession } from "next-auth/react";
 
 import React, { useRef, useState } from "react";
 
-function PostBlog() {
+function PostBlog({ user }: any) {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const inputRef = useRef<any>(null);
   const [files, setFiles] = useState<any>();
+  const [fileName, setFileName] = useState<string>("");
+  const [progress, setProgress] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
   const TAGS = [
     "Innovation",
     "Health",
@@ -26,34 +40,108 @@ function PostBlog() {
     "Food",
     "Career",
   ];
+  const [values, setValues] = useState({
+    title: "",
+    tags: "",
+    content: "",
+  });
+
+  const handleValuesChange =
+    (key: keyof typeof values) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setValues((prev) => {
+        return { ...prev, [key]: e.target.value };
+      });
+    };
+
+  const handleTagsSelect = (val: string) => {
+    setValues((prev) => {
+      return { ...prev, tags: val };
+    });
+  };
+
+  const getBlogId = async () => {
+    const initialVal = 230001;
+    const coll = collection(db, "blogs");
+    const snapshot = await getCountFromServer(coll);
+
+    return `BB${initialVal + snapshot.data().count}`;
+  };
 
   function handleChange(e: any) {
     e.preventDefault();
     console.log("File has been added");
     if (e.target.files && e.target.files[0]) {
-      console.log(e.target.files);
-      // for (let i = 0; i < e.target.files["length"]; i++) {
+      console.log(e.target.files[0]);
       setFiles(e.target.files[0]);
-      // }
+      setFileName(e.target.files[0].name);
     }
   }
 
-  function handleSubmitFile(e: any) {
-    if (files.length === 0) {
-      // no file has been submitted
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (files) {
+      const blogId = await getBlogId();
+      const storageRef = ref(storage, `files/${fileName}`);
+      const metadata = {
+        contentType: "image/png",
+      };
+      const uploadTask = uploadBytesResumable(storageRef, files, metadata);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          // console.log(`Upload is ${progress}% done`);
+          setProgress(progress);
+        },
+        (error) => {
+          console.log(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            var newBlog = {
+              title: values.title,
+              tag: values.tags,
+              content: values.content,
+              name: user?.name,
+              picture: user?.picture,
+              createdAt: serverTimestamp(),
+              imageUrl: downloadURL,
+            };
+            if (!newBlog.title || !newBlog.tag || !newBlog.content) {
+              setLoading(false);
+              alert("Please fill all the fields");
+            } else {
+              const docRef = doc(db, "blogs", blogId);
+              await setDoc(
+                docRef,
+                {
+                  ...newBlog
+                },
+                { merge: true }
+              )
+              console.log(newBlog);
+              setLoading(false);
+              alert("Blog Posted");
+            }
+          });
+        }
+      );
+      console.log(files);
+      console.log(values);
     } else {
       // write submit logic here
     }
-  }
+  };
 
   function handleDrop(e: any) {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      // for (let i = 0; i < e.dataTransfer.files["length"]; i++) {
       setFiles(e.dataTransfer.files[0]);
-      // }
+      setFileName(e.dataTransfer.files[0].name);
     }
   }
 
@@ -75,13 +163,6 @@ function PostBlog() {
     setDragActive(true);
   }
 
-  function removeFile(fileName: any, idx: any) {
-    const newArr = [...files];
-    newArr.splice(idx, 1);
-    setFiles([]);
-    setFiles(newArr);
-  }
-
   function openFileExplorer() {
     inputRef.current.value = "";
     inputRef.current.click();
@@ -99,7 +180,7 @@ function PostBlog() {
           </p>
         </div>
         <form
-          // onSubmit={handleSubmit}
+          onSubmit={handleSubmit}
           className="w-full p-4 font-outfit bg-app-grey-light flex flex-col gap-4 rounded border border-white/10"
         >
           <h1 className="font-bold text-xl md:text-2xl">Blog Details</h1>
@@ -110,12 +191,10 @@ function PostBlog() {
                 dragActive ? "border-app-slate-blue" : "border-stone-300"
               }  p-4 border-2  border-dashed rounded-lg  min-h-[10rem] text-center flex flex-col items-center justify-center`}
               onDragEnter={handleDragEnter}
-              // onSubmit={(e) => e.preventDefault()}
               onDrop={handleDrop}
               onDragLeave={handleDragLeave}
               onDragOver={handleDragOver}
             >
-              {/* this input element allows us to select files for upload. We make it hidden so we can activate it when the user clicks select files */}
               <input
                 placeholder="fileInput"
                 className="hidden"
@@ -125,37 +204,26 @@ function PostBlog() {
                 onChange={handleChange}
                 accept="image/png"
               />
-
-              <p>
-                Drag & Drop files or{" "}
-                <span
-                  className="font-bold text-blue-600 cursor-pointer"
-                  onClick={openFileExplorer}
-                >
-                  <u>Select files</u>
-                </span>{" "}
-                to upload
-              </p>
-
-              {/* <div className="flex flex-col items-center p-3">
-                {files.map((file: any, idx: any) => (
-                  <div key={idx} className="flex flex-row space-x-5">
-                    <span>{file.name}</span>
-                    <span
-                      className="text-red-500 cursor-pointer"
-                      onClick={() => removeFile(file.name, idx)}
-                    >
-                      remove
-                    </span>
-                  </div>
-                ))}
-              </div> */}
-            L</div>
+              {!fileName ? (
+                <p>
+                  Drag & Drop files or{" "}
+                  <span
+                    className="font-bold text-app-slate-blue cursor-pointer"
+                    onClick={openFileExplorer}
+                  >
+                    <u>Select file</u>
+                  </span>{" "}
+                  to upload
+                </p>
+              ) : (
+                <p>{fileName}</p>
+              )}
+            </div>
           </div>
           <div className="grid w-full items-center gap-1.5">
             <Label htmlFor="title">Blog Title</Label>
             <Input
-              // onChange={handleValuesChange("title")}
+              onChange={handleValuesChange("title")}
               required
               type="text"
               className="h-12"
@@ -166,10 +234,7 @@ function PostBlog() {
             <Label htmlFor="tags" className="mb-2">
               Blog Tags
             </Label>
-            <Select
-              required
-              // onValueChange={handleCategorySelect}
-            >
+            <Select required onValueChange={handleTagsSelect}>
               <SelectTrigger className="w-full h-12">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
@@ -186,27 +251,42 @@ function PostBlog() {
             <Label htmlFor="content">Blog Content</Label>
             <Textarea
               required
-              // onChange={handleValuesChange("description")}
+              onChange={handleValuesChange("content")}
               placeholder="Type your blog content"
               id="content"
             />
           </div>
 
           <Button type="submit" className="h-12">
-            Post this Job
+            Post this Blog
           </Button>
         </form>
-
-        {/* <button
-          className="bg-black rounded-lg p-2 mt-3 w-auto"
-          onClick={handleSubmitFile}
-        >
-          <span className="p-2 text-white">Submit</span>
-        </button> */}
       </section>
       {/* <Footer /> */}
     </main>
   );
+}
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+  const email = session?.user?.email;
+  const docRef = doc(db, "users", email!);
+  const docSnap = await getDoc(docRef);
+
+  const user: any = session ? { user: docSnap.data() } : null;
+  return {
+    props: {
+      ...user,
+    },
+  };
 }
 
 export default PostBlog;
