@@ -3,6 +3,7 @@ import { db } from "@/backend/firebase";
 import { Button } from "@/components/ui/button";
 import { collection, onSnapshot } from "firebase/firestore";
 import { CalendarClock, MapPin } from "lucide-react";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -36,16 +37,18 @@ const Blogs = () => {
     "Career",
   ];
   return (
+    <>
+    <Head>
+      <title>Blogs</title>
+    </Head>
     <main className="h-full  w-full font-outfit bg-app-grey-dark text-stone-200">
       <section className="p-4 md:px-16 lg:max-w-7xl lg:mx-auto font-outfit py-[50px] md:py-[80px]">
         <div className="mx-auto flex flex-col lg:max-w-3xl gap-4 text-center pb-[50px] md:pb-[80px]">
           <span className="text-3xl lg:text-5xl font-bold">
-            Nalla Blogs Ingu Kedaikum
+            What&apos;s New?
           </span>
           <p className="text-slate-200 md:text-lg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis tempus
-            nec sem nec pellentesque. Quisque eget nulla sem. Duis quis velit eu
-            leo semper.
+            Explore the latest: Discover What&apos;s New!
           </p>
         </div>
         <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -112,6 +115,7 @@ const Blogs = () => {
         </div>
       </section>
     </main>
+    </>
   );
 };
 

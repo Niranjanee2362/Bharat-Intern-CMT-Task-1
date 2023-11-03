@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import dynamic from "next/dynamic";
-import ReactQuill from "react-quill";
+import Head from "next/head";
 import "react-quill/dist/quill.snow.css";
 
 import {
@@ -225,15 +225,17 @@ function PostBlog() {
     inputRef.current.click();
   }
   return (
+    <>
+    <Head>
+      <title>Post a Blog</title>
+    </Head>
     <main className="min-h-screen w-full font-outfit bg-app-grey-dark text-stone-200">
       {/* <Header /> */}
       <section className="p-4 md:px-16 lg:max-w-4xl lg:mx-auto font-outfit py-[50px] md:py-[80px]">
         <div className="mx-auto flex flex-col gap-4 text-center pb-[50px] md:pb-[80px]">
           <span className="text-3xl lg:text-5xl font-bold">Post a Blog</span>
           <p className="text-slate-200 md:text-lg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis tempus
-            nec sem nec pellentesque. Quisque eget nulla sem. Duis quis velit eu
-            leo semper.
+          Express Yourself In The Digital Age
           </p>
         </div>
         <form
@@ -336,6 +338,7 @@ function PostBlog() {
       </section>
       {/* <Footer /> */}
     </main>
+    </>
   );
 }
 // export async function getServerSideProps(context: any) {

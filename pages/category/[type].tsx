@@ -3,6 +3,7 @@ import { db } from "@/backend/firebase";
 import { Button } from "@/components/ui/button";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { CalendarClock, MapPin } from "lucide-react";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -38,6 +39,10 @@ function Category() {
         "Career",
       ];
   return (
+    <>
+    <Head>
+        <title>{router.query.type} | Blogs</title>
+    </Head>
     <main className="h-full  w-full font-outfit bg-app-grey-dark text-stone-200">
       <section className="p-4 md:px-16 lg:max-w-7xl lg:mx-auto font-outfit py-[50px] md:py-[80px]">
         <div className="mx-auto flex flex-col lg:max-w-3xl gap-4 text-center pb-[50px] md:pb-[80px]">
@@ -45,9 +50,7 @@ function Category() {
             {router.query.type}
           </span>
           <p className="text-slate-200 md:text-lg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis tempus
-            nec sem nec pellentesque. Quisque eget nulla sem. Duis quis velit eu
-            leo semper.
+          Explore the latest: Discover What&apos;s New!
           </p>
         </div>
         <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -57,9 +60,9 @@ function Category() {
               <div className="flex flex-col gap-2 mt-4">
                 {CATEGORIES.map((item, idx) => (
                   <Link href={`/category/${item}`} key={idx}>
-                    <span className="text-lg py-2 px-4 border bg-app-grey-dark rounded hover:bg-app-slate-blue transition-all duration-300 border-white/10">
+                    <p className="text-lg py-2 px-4 border bg-app-grey-dark rounded hover:bg-app-slate-blue transition-all duration-300 border-white/10">
                       {item}
-                    </span>
+                    </p>
                   </Link>
                 ))}
               </div>
@@ -114,6 +117,7 @@ function Category() {
         </div>
       </section>
     </main>
+    </>
   );
 }
 

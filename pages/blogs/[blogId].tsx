@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/backend/firebase";
 import parse from "html-react-parser";
+import Head from "next/head";
 
 function BlogId() {
   const router = useRouter();
@@ -22,6 +23,10 @@ function BlogId() {
   }, [blogId]);
   console.log(blog)
   return (
+    <>
+    <Head>
+      <title>{blog.title}</title>
+    </Head>
     <main className="w-full min-h-screen">
       <div>
         <Image
@@ -51,6 +56,7 @@ function BlogId() {
         </div>
       </div>
     </main>
+    </>
   );
 }
 

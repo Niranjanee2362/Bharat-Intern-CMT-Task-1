@@ -6,10 +6,15 @@ import React from "react";
 import { db } from '@/backend/firebase';
 import PostedBlogs from "@/components/dashboard/PostedBlogs";
 import parse from "html-react-parser";
+import Head from "next/head";
  
 function Dashboard() {
   // console.log(user)
   return (
+    <>
+    <Head>
+      <title>Dashboard</title>
+    </Head>
     <main className="min-h-screen bg-[url('/assets/line-bg.png')] w-full font-outfit bg-app-grey-dark text-stone-200">
       <div className="p-4 md:px-16 lg:max-w-7xl lg:mx-auto">
         <div className="flex flex-col md:flex-row md:justify-between mt-8 md:items-center gap-4 md:gap-0">
@@ -32,6 +37,7 @@ function Dashboard() {
         <PostedBlogs/>
       </div>
     </main>
+    </>
   );
 }
 

@@ -14,7 +14,7 @@ import Link from "next/link";
 import { collection, deleteDoc, doc, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/backend/firebase";
 import { useSession } from "next-auth/react";
-import parse from "html-react-parser";
+
 
 function PostedBlogs() {
   const router = useRouter();
@@ -46,7 +46,8 @@ function PostedBlogs() {
   return (
     <section className="mt-4 font-outfit">
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {blogs &&
+        {blogs?.length!=0 ? (
+          blogs &&
           blogs.map((bb: any) => (
             <div
               className="w-full flex flex-col gap-8 hover:-translate-y-1 transition-all duration-300 bg-app-grey-light p-4 md:p-8 rounded border border-white/10"
@@ -60,9 +61,7 @@ function PostedBlogs() {
                   {bb.title}
                 </span>
                 <div className="text-base text-slate-300/80">
-                  <p className="truncate">
-                    {bb.desc}
-                  </p>
+                  <p className="truncate">{bb.desc}</p>
                 </div>
               </div>
               {/* <div>
@@ -96,7 +95,12 @@ function PostedBlogs() {
                 </div>
               </div>
             </div>
-          ))}
+          ))
+        ) : (
+          <div className="text-xl">
+            <span>No blogs Posted Yet</span>
+          </div>
+        )}
       </div>
     </section>
   );

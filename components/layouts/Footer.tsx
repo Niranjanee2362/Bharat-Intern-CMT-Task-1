@@ -20,7 +20,7 @@ function Footer() {
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
-                    href="#"
+                    href="https://www.linkedin.com/in/niranjanee-mohanasundaram-3085291b9/"
                     className="mx-[2px] p-3 transition-all duration-300 hover:text-app-secondary"
                   >
                     <Linkedin strokeWidth={1.5} />
@@ -28,7 +28,7 @@ function Footer() {
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
-                    href="#"
+                    href="https://twitter.com/NiranjaneeM"
                     className="mx-[2px] p-3 transition-all duration-300 hover:text-app-secondary"
                   >
                     <Twitter strokeWidth={1.5} />
@@ -36,19 +36,16 @@ function Footer() {
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
-                    href="#"
-                    className="mx-[2px] p-3 transition-all duration-300 hover:text-app-secondary"
-                  >
-                    <Instagram strokeWidth={1.5} />
-                  </a>
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="#"
+                    href="mailto:niranjanee.mohan@gmail.com"
                     className="mx-[2px] p-3 transition-all duration-300 hover:text-app-secondary"
                   >
                     <Mail strokeWidth={1.5} />
                   </a>
+                </div>
+                <div className="flex flex-col md:flex-row items-center gap-2">
+                  <span>Niranjanee M </span>
+                  <span> Tech Stack: NextJS | TailwindCSS | ShadcnUI | Firebase | Quill | NextAuth </span>
+                  
                 </div>
               </div>
             </div>
