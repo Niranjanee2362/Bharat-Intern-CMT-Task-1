@@ -3,6 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import dynamic from "next/dynamic";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
 import {
   Select,
   SelectContent,
@@ -20,17 +24,61 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 import React, { useRef, useState } from "react";
 
-function PostBlog({ user }: any) {
+const QuillNoSSRWrapper = dynamic(import("react-quill"), {
+  ssr: false,
+  loading: () => <p>Loading ...</p>,
+});
+const modules = {
+  toolbar: [
+    [{ header: "1" }, { header: "2" }, { font: [] }],
+    [{ size: [] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    ["link", "image", "video"],
+    ["clean"],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
+};
+const formats = [
+  "header",
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  "link",
+  "image",
+  "video",
+];
+
+function PostBlog() {
+  const { data: session } = useSession();
+  const router = useRouter();
   const [dragActive, setDragActive] = useState<boolean>(false);
   const inputRef = useRef<any>(null);
   const [files, setFiles] = useState<any>();
   const [fileName, setFileName] = useState<string>("");
   const [progress, setProgress] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [content,setContent] = useState<string>('');
   const TAGS = [
     "Innovation",
     "Health",
@@ -45,7 +93,12 @@ function PostBlog({ user }: any) {
     title: "",
     tags: "",
     content: "",
+    desc: ""
   });
+
+
+
+  console.log(content)
 
   const handleValuesChange =
     (key: keyof typeof values) =>
@@ -104,9 +157,11 @@ function PostBlog({ user }: any) {
             var newBlog = {
               title: values.title,
               tag: values.tags,
-              content: values.content,
-              name: user?.name,
-              picture: user?.picture,
+              content: content,
+              desc: values.desc,
+              name: session?.user?.name,
+              picture: session?.user?.image,
+              email: session?.user?.email,
               createdAt: serverTimestamp(),
               imageUrl: downloadURL,
             };
@@ -125,7 +180,7 @@ function PostBlog({ user }: any) {
               console.log(newBlog);
               setLoading(false);
               alert("Blog Posted");
-              
+              router.push('/dashboard');
             }
           });
         }
@@ -174,7 +229,7 @@ function PostBlog({ user }: any) {
       {/* <Header /> */}
       <section className="p-4 md:px-16 lg:max-w-4xl lg:mx-auto font-outfit py-[50px] md:py-[80px]">
         <div className="mx-auto flex flex-col gap-4 text-center pb-[50px] md:pb-[80px]">
-          <h2 className="text-3xl lg:text-5xl font-bold">Post a Blog</h2>
+          <span className="text-3xl lg:text-5xl font-bold">Post a Blog</span>
           <p className="text-slate-200 md:text-lg">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis tempus
             nec sem nec pellentesque. Quisque eget nulla sem. Duis quis velit eu
@@ -250,15 +305,27 @@ function PostBlog({ user }: any) {
             </Select>
           </div>
           <div className="grid w-full gap-1.5">
-            <Label htmlFor="content">Blog Content</Label>
-            <Textarea
+            <Label htmlFor="content">Blog Description</Label>
+            <Input
+              onChange={handleValuesChange("desc")}
               required
-              onChange={handleValuesChange("content")}
-              placeholder="Type your blog content"
-              id="content"
+              type="text"
+              className="h-12"
+              placeholder="Description of the blog"
             />
           </div>
-          <Button type="submit" className="h-12">
+          <div className="grid w-full gap-1.5">
+            <Label htmlFor="content">Blog Content</Label>
+            <QuillNoSSRWrapper
+              modules={modules}
+              formats={formats}
+              theme="snow"
+              placeholder="Write Your Blog here"
+              value={content}
+              onChange={setContent}
+            />
+          </div>
+          <Button type="submit" className="h-12 mt-12">
             {loading ? "Uploading..." : "Post this Blog"}
           </Button>
           {progress > 0 && <Progress value={progress} className="w-full" />}
@@ -271,27 +338,27 @@ function PostBlog({ user }: any) {
     </main>
   );
 }
-export async function getServerSideProps(context: any) {
-  const session = await getSession(context);
+// export async function getServerSideProps(context: any) {
+//   const session = await getSession(context);
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-  const email = session?.user?.email;
-  const docRef = doc(db, "users", email!);
-  const docSnap = await getDoc(docRef);
+//   if (!session) {
+//     return {
+//       redirect: {
+//         destination: "/",
+//         permanent: false,
+//       },
+//     };
+//   }
+//   const email = session?.user?.email;
+//   const docRef = doc(db, "users", email!);
+//   const docSnap = await getDoc(docRef);
 
-  const user: any = session ? { user: docSnap.data() } : null;
-  return {
-    props: {
-      ...user,
-    },
-  };
-}
+//   const user: any = session ? { user: docSnap.data() } : null;
+//   return {
+//     props: {
+//       ...user,
+//     },
+//   };
+// }
 
 export default PostBlog;

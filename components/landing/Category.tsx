@@ -9,6 +9,7 @@ import {
   TentTree,
   ChefHat,
 } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 interface CategoryData {
@@ -68,7 +69,7 @@ function Category() {
               </div>
               <div className="flex">
                 <span className="text-lg md:text-2xl lg:text-4xl font-bold">
-                  {category.title}
+                  <Link href={`/category/${category.title}`}>{category.title}</Link>
                 </span>
               </div>
             </div>

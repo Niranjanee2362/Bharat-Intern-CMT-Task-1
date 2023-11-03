@@ -78,6 +78,18 @@
 	border-radius: 0.25rem;
 }
 
+h1{
+  font-size: 52px;
+}
+h2{
+  font-size: 36px
+}
+ol{
+  list-style: lower-latin
+}
+ul{
+  list-style-type: circle
+}
  
 @layer base {
   * {

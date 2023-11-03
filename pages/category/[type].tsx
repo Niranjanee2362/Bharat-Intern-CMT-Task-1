@@ -1,46 +1,48 @@
 
 import { db } from "@/backend/firebase";
 import { Button } from "@/components/ui/button";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { CalendarClock, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-const Blogs = () => {
-  const [blogs,setBlogs] = useState<any>([])
+function Category() {
+      const [blogs, setBlogs] = useState<any>([]);
+      const router = useRouter();
 
-  useEffect(() => {
-      const unsub = onSnapshot(
-        (collection(db, "blogs")),
-        (docs) => {
-          const blogs: any = [];
-          docs.forEach((doc) => {
-            blogs.push({ ...doc.data(), id: doc.id });
-          });
-          setBlogs(blogs);
-        }
-      );
-      return () => unsub();
-  }, []);
-  console.log(blogs)
+      useEffect(() => {
+        const unsub = onSnapshot(
+          query(collection(db, "blogs"), where("tag", "==", `${router.query.type}`)),
+          (docs) => {
+            const blogs: any = [];
+            docs.forEach((doc) => {
+              blogs.push({ ...doc.data(), id: doc.id });
+            });
+            setBlogs(blogs);
+          }
+        );
+        return () => unsub();
+      }, [router.query.type]);
+      console.log(router.query.type);
 
-  const CATEGORIES = [
-    "Innovation",
-    "Health",
-    "Wanderlust",
-    "Storytelling",
-    "Fashion",
-    "Tech",
-    "Food",
-    "Career",
-  ];
+      const CATEGORIES = [
+        "Innovation",
+        "Health",
+        "Wanderlust",
+        "Storytelling",
+        "Fashion",
+        "Tech",
+        "Food",
+        "Career",
+      ];
   return (
     <main className="h-full  w-full font-outfit bg-app-grey-dark text-stone-200">
       <section className="p-4 md:px-16 lg:max-w-7xl lg:mx-auto font-outfit py-[50px] md:py-[80px]">
         <div className="mx-auto flex flex-col lg:max-w-3xl gap-4 text-center pb-[50px] md:pb-[80px]">
           <span className="text-3xl lg:text-5xl font-bold">
-            Nalla Blogs Ingu Kedaikum
+            {router.query.type}
           </span>
           <p className="text-slate-200 md:text-lg">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis tempus
@@ -55,9 +57,9 @@ const Blogs = () => {
               <div className="flex flex-col gap-2 mt-4">
                 {CATEGORIES.map((item, idx) => (
                   <Link href={`/category/${item}`} key={idx}>
-                    <h1 className="text-lg py-2 px-4 border bg-app-grey-dark rounded hover:bg-app-slate-blue transition-all duration-300 border-white/10">
+                    <span className="text-lg py-2 px-4 border bg-app-grey-dark rounded hover:bg-app-slate-blue transition-all duration-300 border-white/10">
                       {item}
-                    </h1>
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -73,9 +75,9 @@ const Blogs = () => {
                   <span className="bg-app-slate-blue rounded font-medium px-2 py-1 w-fit">
                     {blog.tag}
                   </span>
-                  <span className="font-semibold text-2xl capitalize">
+                  <h1 className="font-semibold text-2xl capitalize">
                     {blog.title}
-                  </span>
+                  </h1>
                   <div className="text-base text-slate-300/80">
                     <p className="truncate">{blog.desc}</p>
                   </div>
@@ -113,6 +115,6 @@ const Blogs = () => {
       </section>
     </main>
   );
-};
+}
 
-export default Blogs;
+export default Category

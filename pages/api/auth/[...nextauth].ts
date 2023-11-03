@@ -16,12 +16,12 @@ export const authOptions: NextAuthOptions = {
       // if (currentUser?.data()?.registered) {
       //   return true;
       // }else{
-        await setDoc(docRef, { ...profile, registered: false , paperUpload: false, paperId: ''},{merge:true});
+        await setDoc(docRef, { ...profile},{merge:true});
       // }
       return true;
     },
     async redirect({ baseUrl }) {
-      return baseUrl + "/dashboard"; // Redirect to the /dashboard page
+      return baseUrl + "/"; // Redirect to the /dashboard page
     },
   },
   providers: [

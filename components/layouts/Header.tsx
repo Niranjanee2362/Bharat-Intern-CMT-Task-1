@@ -22,24 +22,24 @@ import { signIn, signOut, useSession } from "next-auth/react";
 interface Navdata {
   title: string;
   link: string;
+  flag: boolean;
 }
 [];
 const NAVDATA: Navdata[] = [
   {
-    title: "Link 1",
+    title: "Home",
     link: "/",
+    flag: false
   },
   {
-    title: "Link 2",
-    link: "/",
+    title: "Blogs",
+    link: "/blogs",
+    flag: false
   },
   {
-    title: "Link 3",
-    link: "/",
-  },
-  {
-    title: "Link 4",
-    link: "/",
+    title: "Dashboard",
+    link: "/dashboard",
+    flag: true
   },
 ];
 function Header() {
@@ -47,12 +47,17 @@ function Header() {
   return (
     <nav className="px-4 md:p-0 sticky top-0 z-50 flex items-center h-[5rem] bg-app-grey-dark justify-between md:px-16  lg:mx-auto">
       <Link href={"/"}>
-        <h1 className="text-2xl font-semibold">BharatBlog</h1>
+        <span className="text-2xl font-semibold">BharatBlog</span>
       </Link>
       <div className="font-normal">
         <ul className=" lg:flex lg:gap-4 text-center text-md xl:text-lg items-center hidden">
           {NAVDATA.map((link) => (
-            <li key={`nav-mobile-link-${link.link}`} className="p-2">
+            <li
+              key={`nav-mobile-link-${link.link}`}
+              className={`list-none p-2 ${
+                !session && link.flag ? "hidden" : ""
+              }`}
+            >
               <Button
                 variant={"secondary"}
                 asChild
@@ -62,7 +67,7 @@ function Header() {
               </Button>
             </li>
           ))}
-          <li>
+          <li className="list-none">
             {!session ? (
               <Button
                 variant={"default"}
@@ -107,7 +112,12 @@ function Header() {
                 <nav className="contents font-semibold ">
                   <ul className="mx-auto flex flex-col items-center ">
                     {NAVDATA.map((link) => (
-                      <li key={`nav-mobile-link-${link.link}`} className="p-2">
+                      <li
+                        key={`nav-mobile-link-${link.link}`}
+                        className={`p-2 list-none ${
+                          !session && link.flag ? "hidden" : ""
+                        }`}
+                      >
                         <Button
                           variant={"secondary"}
                           asChild
@@ -117,7 +127,7 @@ function Header() {
                         </Button>
                       </li>
                     ))}
-                    <li>
+                    <li className="list-none">
                       {!session ? (
                         <Button
                           variant={"default"}
