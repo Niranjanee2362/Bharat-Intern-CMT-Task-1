@@ -43,12 +43,12 @@ function Footer() {
                   </a>
                 </div>
               </div>
-                <div className="flex flex-col md:flex-row items-center gap-2">
+            </div>
+                <div className="flex flex-col items-center gap-2">
                   <span>Niranjanee M </span>
                   <span> Tech Stack: NextJS | TailwindCSS | ShadcnUI | Firebase | Quill | NextAuth </span>
                   
                 </div>
-            </div>
           </div>
           <div className="w-full p-2 md:p-4">
             <div className="flex flex-col items-center justify-start md:flex-row md:justify-between">
