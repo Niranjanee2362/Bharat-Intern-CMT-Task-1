@@ -42,12 +42,12 @@ function Footer() {
                     <Mail strokeWidth={1.5} />
                   </a>
                 </div>
+              </div>
                 <div className="flex flex-col md:flex-row items-center gap-2">
                   <span>Niranjanee M </span>
                   <span> Tech Stack: NextJS | TailwindCSS | ShadcnUI | Firebase | Quill | NextAuth </span>
                   
                 </div>
-              </div>
             </div>
           </div>
           <div className="w-full p-2 md:p-4">
